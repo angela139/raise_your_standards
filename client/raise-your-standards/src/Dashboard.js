@@ -3,13 +3,9 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { useNavigate } from "react-router-dom";
 import "./Login.css";
 import { auth, db, logout } from "./firebase";
-import { query, collection, getDocs, where } from "firebase/firestore";
-function Dashboard() {
-  const [user, loading, error] = useAuthState(auth);
-  const [name, setName] = useState("");
-  const [username, setUsername] = useState("");
-  const navigate = useNavigate();
-  const standards = [
+import { query, collection, getDocs, where, updateDoc, doc } from "firebase/firestore";
+
+const standards = [
   "S1: Volume by method of Washers",
   "S2: Volume by method of Cross-sections",
   "S3: Average Value",
@@ -44,6 +40,24 @@ function Dashboard() {
   "S32: Midpoint Rule",
   "S33: Trapezoid Rule",
   "S34: Simpson's Rule"]
+  
+function Dashboard() {
+  const [user, loading, error] = useAuthState(auth);
+  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
+  const navigate = useNavigate();
+  const [checkedState, setCheckedState] = useState(
+    new Array(standards.length).fill(false)
+  );
+  const [chosenStandards, setChosenStandards] = useState([]);
+  
+  const handleOnChange = (position_index) => {
+    const updateCheckedState = checkedState.map((standard, index) => 
+      index == position_index ? !standard : standard
+    );
+    setCheckedState(updateCheckedState);
+  };
+  
   const fetchUserName = async () => {
     try {
       const q = query(collection(db, "users"), where("uid", "==", user?.uid));
@@ -55,36 +69,60 @@ function Dashboard() {
       alert("An error occured while fetching user data");
     }
   };
+  const updateUserProfile = async () => {
+    try {
+      sort_standards();
+      const q = doc(db, "users", user.uid);
+      await updateDoc(q, {
+        username: username,
+        strong_standards: chosenStandards
+      });
+    } catch (err) {
+      console.error(err);
+      alert("An error occured while adding user data");
+    }
+  }
+  // FIX THIS
+  const sort_standards = async () => {
+    const standards_array = [];
+    for (let i = 0; i < checkedState.length; i++){
+      if (checkedState[i]){
+        standards_array.push(standards[i]);
+      }
+    }
+    setChosenStandards(standards_array);
+  }
   useEffect(() => {
     if (loading) return;
     if (!user) return navigate("/");
     fetchUserName();
   }, [user, loading]);
   return (
-    <div class="dashboard">
-      <section class="container-fluid">
-      <section class="row justify-content-center">
-      <section class="col-12 col-sm-12 col-md-6">
-       <div class="login__container">
+    <div className="dashboard">
+      <section className="container-fluid">
+      <section className="row justify-content-center">
+      <section className="col-12 col-sm-12 col-md-6">
+       <div className="login__container">
          <h3>Set Up Your Profile</h3>
-         <div class="form-group">
-            <label for="username" class="form-label">Username</label>
-            <input type="username" value={username} onChange={(e) => setUsername(e.target.value)} class="form-control form-control-lg" placeholder="Username"/>
+         <div className="form-group">
+            <label htmlFor="username" className="form-label">Username</label>
+            <input type="username" value={username} onChange={(e) => setUsername(e.target.value)} className="form-control form-control-lg" placeholder="Username"/>
         </div>
-          <div class="form-check">
-          <h5 class="move">Strong Standards (have a 4 or 5)</h5>
+          <div className="form-check">
+          <h5 className="move">Strong Standards (have a 4 or 5)</h5>
           {standards.map((item, index) => (
               <div key={index}>
-                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"/>
-                <label class="form-check-label" for="flexCheckDefault">{item}
+                <input className="form-check-input" type="checkbox" value={item} 
+                id="flexCheckDefault" checked={checkedState[index]} onChange={() => handleOnChange(index)} />
+                <label className="form-check-label" htmlFor="flexCheckDefault">{item}
                 </label>
               </div>
           ))}
           </div>
+          <button className="btn btn-secondary btn-lg btn-block login-button" onClick={updateUserProfile}>Submit</button>
         <h4>Logged in as <span>{name}</span></h4>
          <h6>with <span>{user?.email}</span></h6>
-         <br></br>
-         <button class="btn btn-primary btn-lg btn-block login-button" onClick={logout}>Logout</button>
+         <button className="btn btn-primary btn-lg btn-block login-button" onClick={logout}>Logout</button>
        </div>
        </section>
        </section>

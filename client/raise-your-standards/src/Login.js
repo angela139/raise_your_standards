@@ -17,25 +17,25 @@ function Login() {
     if (user) navigate("/dashboard", { replace: true });
   }, [user, loading]);
   return (
-    <div class="login">
-    <section class="container-fluid">
-      <section class="row justify-content-center">
-      <section class="col-12 col-sm-12 col-md-6">
-      <div class="login__container">
-        <h3 class="text-center">Raise Your Standards</h3>
-        <div class="form-group">
-            <label for="email" class="form-label">Email</label>
-            <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} class="form-control form-control-lg" placeholder="Email"/>
+    <div className="login">
+    <section className="container-fluid">
+      <section className="row justify-content-center">
+      <section className="col-12 col-sm-12 col-md-6">
+      <div className="login__container">
+        <h3 className="text-center">Raise Your Standards</h3>
+        <div className="form-group">
+            <label for="email" className="form-label">Email</label>
+            <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} className="form-control form-control-lg" placeholder="Email"/>
         </div>
-        <div class="form-group">
-            <label for="password" class="form-label">Password</label>
-            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} class="form-control form-control-lg" placeholder="Password"/>
+        <div className="form-group">
+            <label for="password" className="form-label">Password</label>
+            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="form-control form-control-lg" placeholder="Password"/>
         </div>
         <br></br>
-        <div class="text-center">
-        <button class="btn btn-primary btn-lg btn-block login-button" type="submit" onClick={() => signInWithEmailAndPassword(email, password)}>Login</button>
+        <div className="text-center">
+        <button className="btn btn-primary btn-lg btn-block login-button" type="submit" onClick={() => signInWithEmailAndPassword(email, password)}>Login</button>
         <br></br><br></br>
-        <button class="btn btn-lg btn-block btn-secondary login-button" type="submit" onClick={signInWithGoogle}> Sign in with Google</button>
+        <button className="btn btn-lg btn-block btn-secondary login-button" type="submit" onClick={signInWithGoogle}> Sign in with Google</button>
         </div>
         <br></br>
         <div>
