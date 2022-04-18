@@ -46,16 +46,20 @@ function Dashboard() {
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
   const navigate = useNavigate();
-  const [checkedState, setCheckedState] = useState(
-    new Array(standards.length).fill(false)
-  );
-  const [chosenStandards, setChosenStandards] = useState([]);
+  const chosenStandards = [];
   
   const handleOnChange = (position_index) => {
-    const updateCheckedState = checkedState.map((standard, index) => 
-      index == position_index ? !standard : standard
-    );
-    setCheckedState(updateCheckedState);
+    if (!chosenStandards.includes(standards[position_index])){
+      chosenStandards.push(standards[position_index]);
+    }
+    else{
+      chosenStandards.pop(standards[position_index]);
+    }
+    chosenStandards.sort((a,b) => {
+      if (Number(a.replace(/\D/g,'')) > Number(b.replace(/\D/g,''))) return 1;
+      if (Number(a.replace(/\D/g,'')) < Number(b.replace(/\D/g,''))) return -1;
+      return 0;
+    });
   };
   
   const fetchUserName = async () => {
@@ -71,26 +75,16 @@ function Dashboard() {
   };
   const updateUserProfile = async () => {
     try {
-      sort_standards();
       const q = doc(db, "users", user.uid);
       await updateDoc(q, {
         username: username,
         strong_standards: chosenStandards
       });
+      navigate("/match");
     } catch (err) {
       console.error(err);
       alert("An error occured while adding user data");
     }
-  }
-  // FIX THIS
-  const sort_standards = async () => {
-    const standards_array = [];
-    for (let i = 0; i < checkedState.length; i++){
-      if (checkedState[i]){
-        standards_array.push(standards[i]);
-      }
-    }
-    setChosenStandards(standards_array);
   }
   useEffect(() => {
     if (loading) return;
@@ -113,7 +107,7 @@ function Dashboard() {
           {standards.map((item, index) => (
               <div key={index}>
                 <input className="form-check-input" type="checkbox" value={item} 
-                id="flexCheckDefault" checked={checkedState[index]} onChange={() => handleOnChange(index)} />
+                id="flexCheckDefault" onChange={() => handleOnChange(index)} />
                 <label className="form-check-label" htmlFor="flexCheckDefault">{item}
                 </label>
               </div>

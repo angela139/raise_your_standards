@@ -24,11 +24,11 @@ function Login() {
       <div className="login__container">
         <h3 className="text-center">Raise Your Standards</h3>
         <div className="form-group">
-            <label for="email" className="form-label">Email</label>
+            <label htmlFor="email" className="form-label">Email</label>
             <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} className="form-control form-control-lg" placeholder="Email"/>
         </div>
         <div className="form-group">
-            <label for="password" className="form-label">Password</label>
+            <label htmlFor="password" className="form-label">Password</label>
             <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="form-control form-control-lg" placeholder="Password"/>
         </div>
         <br></br>
